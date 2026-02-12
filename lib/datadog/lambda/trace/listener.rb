@@ -48,6 +48,8 @@ module Datadog
         options[:continue_from] = trace_digest if trace_digest
 
         @trace = Datadog::Tracing.trace('aws.lambda', **options)
+        Datadog::Utils.logger.debug "span_id=#{@trace&.id}"
+        Datadog::Utils.logger.debug "trace_id=#{@trace&.trace_id}"
 
         Datadog::Trace.apply_datadog_trace_context(Datadog::Trace.trace_context)
       end
@@ -56,6 +58,10 @@ module Datadog
       def on_end(response:, request_context:)
         Datadog::Utils.send_end_invocation_request(response:, span_id: @trace.id, request_context:)
         @trace&.finish
+      end
+
+      def span
+        @trace
       end
 
       private

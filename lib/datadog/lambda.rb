@@ -78,6 +78,10 @@ module Datadog
       Hash[Datadog::Trace.trace_context]
     end
 
+    def self.listener_span
+      @listener&.span
+    end
+
     # Send a custom distribution metric
     # @param name [String] name of the metric
     # @param value [Numeric] value of the metric
